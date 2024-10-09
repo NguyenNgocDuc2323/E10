@@ -32,15 +32,18 @@ public class OrderController {
         if (!Pattern.matches("(ORDPM)[0-9]{8}", orderId)) {
             throw new InvalidOrderIdException("Order Id phải là một chuỗi hợp lệ!");
         }
-        return orderId;
+        else{
+            return orderId;
+        }
     }
 
-    public void getOrderById(String id){
+    public Order getOrderById(String id){
         try{
             Order foundOrder = os.getOrderById(id);
-            System.out.println(foundOrder);
+            return foundOrder;
         } catch (NotFoundOrderIdException e) {
             System.out.println(e.getMessage());
+            return null;
         }
     }
     public void addOrder(String customerId, List<OrderDetail> orderDetails, String orderId) throws NotEnoughInventoryNumberException, InvalidOrderIdException {

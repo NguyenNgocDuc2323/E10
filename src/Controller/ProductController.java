@@ -17,53 +17,41 @@ public class ProductController {
         this.ps = ps;
         this.products = ps.getProducts();
     }
-    public  void validateProductId(String productId) {
-        try {
-            if (!Pattern.matches("(MS|NE|SE)[0-9]{6}", productId)) {
-                throw new InvalidProducIdException("Định dạng ID Sản Phẩm KhôngHợp Lệ");
-            }else{
-                System.out.println("Định dạng ID Sản Phẩm Hợp Lệ");
-            }
-        } catch (InvalidProducIdException e) {
-            System.out.println("Định dạng ID Sản Phẩm Hợp Lệ");
+    public  String validateProductId(String productId) throws InvalidProducIdException{
+        if (!Pattern.matches("(MS|NE|SE)[0-9]{6}", productId)) {
+            throw new InvalidProducIdException("Định dạng ID Sản Phẩm Không Hợp Lệ");
         }
-        finally {
-            System.out.println(productId);
+        else{
+            return productId;
         }
     }
-    public void validateProductName(String productName) throws InvalidProductNameException {
-        try{
-            if (!Pattern.matches("[a-zA-Z\\s]+", productName)) {
-                throw new InvalidProductNameException("Định Dạng Tên Sản Phẩm Không Đúng!");
-            }
-            else{
-                System.out.println("Tên Sản phẩm đúng định dạng");
-            }
+    public String validateProductName(String productName) throws InvalidProductNameException {
+        if (!Pattern.matches("[a-zA-Z\\s]+", productName)) {
+            throw new InvalidProductNameException("Định Dạng Tên Sản Phẩm Không Đúng!");
         }
-        catch (InvalidProductNameException ex){
-            System.out.println(ex.getMessage());
+        else{
+            return productName;
         }
-        finally {
-            System.out.println(productName);
-        }
-
     }
-    public void validateProductQuantity(String productQuantity){
+    public int validateProductQuantity(String productQuantity){
+        int quantity = Integer.parseInt(productQuantity);
         try{
-            int quantity = Integer.parseInt(productQuantity);
             if(quantity < 0){
                 throw new InvalidQuantityException("Số lượng sản phẩm phải là số dương");
             }
         }catch (InvalidQuantityException ex){
             System.out.println("Định dạng số lượng không hợp lệ!");
+            return 0;
         }
+        return quantity;
     }
-    public void getProductById(String id){
+    public Product getProductById(String id){
         try{
             Product product = ps.getProductById(id);
-            System.out.println(product);
+            return product;
         } catch (NotFoundProductIdException e) {
             System.out.println(e.getMessage());
+            return null;
         }
     }
 

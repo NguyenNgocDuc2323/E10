@@ -22,15 +22,17 @@ public class OrderDetailController {
         this.ps = ps;
         this.orderStatus = OrderStatus.PENDING;
     }
-    public void validateQuantitySold(String soldQty){
+    public int validateQuantitySold(String soldQty){
         try{
             int qty = Integer.parseInt(soldQty);
             if(qty < 0){
                 throw new InvalidQuantityException("Số Lượng Phải là số nguyên dương!");
             }
+            return qty;
         }
         catch (InvalidQuantityException e){
             System.out.println("Số lượng phải là 1 số!");
+            return 0;
         }
     }
     public void CheckInventoryNumber(List<OrderDetail> orderDetails) throws NotEnoughInventoryNumberException {
