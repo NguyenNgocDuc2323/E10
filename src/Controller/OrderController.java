@@ -14,6 +14,9 @@ import Exception.NotFoundOrderIdException;
 import Exception.NotEnoughInventoryNumberException;
 import Service.ProductService;
 import Exception.NotFoundProductIdException;
+import Validator.CustomerValidator;
+import Validator.OrderValidator;
+import Exception.InvalidCustomerIdException;
 public class OrderController {
     private List<Order> orders;
     private OrderService os;
@@ -28,44 +31,45 @@ public class OrderController {
         this.odc = odc;
         this.ps = ps;
     }
-    public String validateOrderId(String orderId) throws InvalidOrderIdException {
-        if (!Pattern.matches("(ORDPM)[0-9]{8}", orderId)) {
-            throw new InvalidOrderIdException("Order Id phải là một chuỗi hợp lệ!");
-        }
-        else{
-            return orderId;
-        }
-    }
-
     public Order getOrderById(String id){
+        if(OrderValidator.validateOrderId(id)){
+            System.out.println("Order ID invalid");
+            return null;
+        }
         try{
-            Order foundOrder = os.getOrderById(id);
+            Order foundOrder = os.getOrderById(String.valueOf(OrderValidator.validateOrderId(id)));
             return foundOrder;
-        } catch (NotFoundOrderIdException e) {
+        } catch (NotFoundOrderIdException | InvalidOrderIdException e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
-    public void addOrder(String customerId, List<OrderDetail> orderDetails, String orderId) throws NotEnoughInventoryNumberException, InvalidOrderIdException {
-        odc.CheckInventoryNumber(orderDetails);
-        orderId = validateOrderId(orderId);
-        Order newOrder = new Order(orderId, customerId, LocalDate.now());
-        orders.add(newOrder);
-        String finalOrderId = orderId;
-        orderDetails.forEach(orderDetail -> {
-            orderDetail.setOrderId(finalOrderId);
-            try {
-                Product product = ps.getProductById(orderDetail.getProductId());
-                if (product != null) {
-                    product.setQuantity(product.getQuantity() - orderDetail.getQuantity()); // update qty
-                    orderDetails.add(orderDetail);
-                }
-            } catch (NotFoundProductIdException e) {
-                System.out.println(e.getMessage());
+    public void addOrder(String customerId, List<OrderDetail> orderDetails, String orderId) {
+        if (!OrderValidator.validateOrderId(orderId)) {
+            System.out.println("Order ID invalid");
+            return;
+        }
+        if(!CustomerValidator.validateCustomerId(customerId)) {
+            System.out.println("Customer ID invalid");
+            return;
+        }
+        if (!odc.checkInventoryNumber(orderDetails)) {
+            System.out.println("Inventory number not enough");
+            return;
+        }
+        try{
+            List<Order> orders = os.addOrder(customerId, orderDetails, orderId);
+            if(orders != null){
+                System.out.println("Order has been successfully added with ID: " + orderId + " for customer ID: " + customerId);
             }
-        });
-        System.out.println("Đơn hàng đã được thêm thành công với ID: " + orderId);
+            else{
+                System.out.println("error adding order");
+            }
+        }catch (InvalidOrderIdException | InvalidCustomerIdException e) {}
+
     }
+
+
 
 }
 

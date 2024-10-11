@@ -15,15 +15,16 @@ public class CustomerService {
     public List<Customer> getCustomers() {
         return customers;
     }
-    public Customer getCustomerById(String id) throws NotFoundCustomerIdException {
+    public Customer getCustomerById(String id){
         Optional<Customer> foundCus = customers.stream()
                 .filter(customer -> Global.ignoreCase(customer.getId(), id))
                 .findFirst();
-
-        if (foundCus.isPresent()) {
-            return foundCus.get();
-        } else {
-            throw new NotFoundCustomerIdException("Không tìm thấy khách hàng có id là : "+id);
-        }
+        return foundCus.orElse(null);
+    }
+    public List<Customer> getCustomerByName(String customerName){
+        List<Customer> foundCus = customers.stream()
+                .filter(customer -> Global.ignoreCase(customer.getName(),customerName))
+                .toList();
+        return foundCus;
     }
 }

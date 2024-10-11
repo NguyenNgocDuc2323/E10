@@ -1,12 +1,8 @@
 package Exception;
 
-public class NotFoundCustomerIdException extends Exception {
-    private int id;
+public class NotFoundCustomerIdException extends RuntimeException {
     public NotFoundCustomerIdException() {
         super();
-    }
-    public NotFoundCustomerIdException(int id) {
-        this.id = id;
     }
     public NotFoundCustomerIdException(String message) {
         super(message);

@@ -18,6 +18,7 @@ import java.util.List;
 import Exception.NotEnoughInventoryNumberException;
 import Exception.InvalidOrderIdException;
 import Exception.InvalidOrderIdException;
+import Exception.InvalidProductNameException;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
@@ -30,22 +31,22 @@ public class Main {
         customers.add(new Customer("002","Nguyen Thi Phuong"));
         customers.add(new Customer("003","Le Thi Thao"));
 
-        products.add(new Product("PRD1","Iphone 15",50));
-        products.add(new Product("PRD2","Samsung XZ",30));
-        products.add(new Product("PRD3","Oppo C500",25));
+        products.add(new Product("MS123456","Iphone",50));
+        products.add(new Product("NE654321","Samsung",30));
+        products.add(new Product("SE000001","Oppo",25));
 
-        orders.add(new Order("ORD1",customers.get(0).getId(), LocalDate.of(2024,8,20)));
-        orders.add(new Order("ORD2",customers.get(1).getId(), LocalDate.of(2024,3,10)));
-        orders.add(new Order("ORD3",customers.get(2).getId(), LocalDate.of(2024,10,1)));
+        orders.add(new Order("ORDPM12345678",customers.get(0).getId(), LocalDate.of(2024,8,20)));
+        orders.add(new Order("ORDPM12345679",customers.get(1).getId(), LocalDate.of(2024,3,10)));
+        orders.add(new Order("ORDPM12345673",customers.get(2).getId(), LocalDate.of(2024,10,1)));
 
         orderDetails.add(new OrderDetail("ODT1",orders.get(0).getId(),products.get(0).getId(),20));
         orderDetails.add(new OrderDetail("ODT2",orders.get(1).getId(),products.get(1).getId(),10));
-        orderDetails.add(new OrderDetail("ODT3",orders.get(2).getId(),products.get(2).getId(),15));
+        orderDetails.add(new OrderDetail("ODT3",orders.get(2).getId(),products.get(2).getId(),10));
 
         CustomerService cs = new CustomerService(customers);
         OrderDetailService ods = new OrderDetailService(orderDetails);
         ProductService ps = new ProductService(products);
-        OrderService os = new OrderService(orders);
+        OrderService os = new OrderService(orders,ods,ps);
         OrderDetailController odc = new OrderDetailController(ods,ps);
         CustomerController ct = new CustomerController(cs);
         OrderController oc = new OrderController(os,ods,odc,ps);
@@ -56,12 +57,9 @@ public class Main {
         } catch (NotEnoughInventoryNumberException | InvalidOrderIdException e) {
             System.out.println(e.getMessage());
         }
-        System.out.println("Hoàn thành xử lý đơn hàng.");
-        try {
-            odc.CheckInventoryNumber(orderDetails);
-        } catch (NotEnoughInventoryNumberException e) {
-            System.out.println(e.getMessage());
-        }
-
+        Customer foundCus = ct.getCustomerById(customers.get(0).getId());
+        System.out.println(foundCus);
+        List<Product> foundPrd = pc.getProductByName("iphone");
+        System.out.println(foundPrd);
     }
 }

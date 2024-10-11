@@ -15,16 +15,11 @@ public class OrderDetailService {
     public List<OrderDetail> getOrderDetails() {
         return orderDetails;
     }
-    public OrderDetail getOrderDetailById(String id) throws NotFoundOrderIdException {
+    public OrderDetail getOrderDetailById(String id) {
         Optional<OrderDetail> foundOrderDetail =  orderDetails.stream()
                 .filter(orderDetail -> Global.ignoreCase( orderDetail.getId(),id))
                 .findFirst();
-        if(foundOrderDetail.isPresent()){
-            return foundOrderDetail.get();
-        }
-        else{
-            throw new NotFoundOrderIdException("Không tìm thấy order detail có id "+id);
-        }
+        return foundOrderDetail.orElse(null);
     }
 
 

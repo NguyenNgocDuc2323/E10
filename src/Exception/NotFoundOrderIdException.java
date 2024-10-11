@@ -1,10 +1,6 @@
 package Exception;
 
-public class NotFoundOrderIdException extends Exception {
-    private int id;
-    public NotFoundOrderIdException(int id) {
-        this.id = id;
-    }
+public class NotFoundOrderIdException extends RuntimeException {
     public NotFoundOrderIdException() {
         super();
     }

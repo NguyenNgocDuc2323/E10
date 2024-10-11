@@ -1,6 +1,6 @@
 package Exception;
 
-public class InvalidProductNameException extends Exception{
+public class InvalidProductNameException extends RuntimeException{
     public InvalidProductNameException(){
         super();
     }

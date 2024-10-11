@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 
 import Entity.Product;
 import Exception.InvalidProducIdException;
-import  Exception.InvalidProductNameException;
-import Exception.InvalidQuantityException;
 import Service.ProductService;
 import Exception.NotFoundProductIdException;
+import Validator.ProductValidator;
+import Exception.InvalidProductNameException;
 public class ProductController {
     private List<Product> products;
     private ProductService ps;
@@ -17,42 +17,30 @@ public class ProductController {
         this.ps = ps;
         this.products = ps.getProducts();
     }
-    public  String validateProductId(String productId) throws InvalidProducIdException{
-        if (!Pattern.matches("(MS|NE|SE)[0-9]{6}", productId)) {
-            throw new InvalidProducIdException("Định dạng ID Sản Phẩm Không Hợp Lệ");
+    public Product getProductById(String id) {
+        if (!ProductValidator.validateProductId(id)) {
+            System.out.println("Product ID invalid.");
+            return null;
         }
-        else{
-            return productId;
-        }
-    }
-    public String validateProductName(String productName) throws InvalidProductNameException {
-        if (!Pattern.matches("[a-zA-Z\\s]+", productName)) {
-            throw new InvalidProductNameException("Định Dạng Tên Sản Phẩm Không Đúng!");
-        }
-        else{
-            return productName;
-        }
-    }
-    public int validateProductQuantity(String productQuantity){
-        int quantity = Integer.parseInt(productQuantity);
-        try{
-            if(quantity < 0){
-                throw new InvalidQuantityException("Số lượng sản phẩm phải là số dương");
-            }
-        }catch (InvalidQuantityException ex){
-            System.out.println("Định dạng số lượng không hợp lệ!");
-            return 0;
-        }
-        return quantity;
-    }
-    public Product getProductById(String id){
-        try{
+        try {
             Product product = ps.getProductById(id);
             return product;
-        } catch (NotFoundProductIdException e) {
+        } catch (NotFoundProductIdException | InvalidProducIdException e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
-
+    public List<Product> getProductByName(String name) {
+        if (!ProductValidator.validateProductName(name)) {
+            System.out.println("Product name invalid");
+            return null;
+        }
+        try{
+            List<Product> foundPrds = ps.getProductsByName(name);
+            return foundPrds;
+        }catch (NotFoundProductIdException | InvalidProductNameException e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 }

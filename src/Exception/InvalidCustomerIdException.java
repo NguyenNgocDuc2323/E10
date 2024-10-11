@@ -1,6 +1,6 @@
 package Exception;
 
-public class InvalidCustomerIdException extends Exception {
+public class InvalidCustomerIdException extends RuntimeException {
     public InvalidCustomerIdException() {
         super();
     }

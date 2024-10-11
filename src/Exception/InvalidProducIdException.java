@@ -1,6 +1,6 @@
 package Exception;
 
-public class InvalidProducIdException extends Exception {
+public class InvalidProducIdException extends RuntimeException {
     public InvalidProducIdException(){
         super();
     }

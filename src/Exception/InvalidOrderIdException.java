@@ -1,6 +1,6 @@
 package Exception;
 
-public class InvalidOrderIdException extends Exception {
+public class InvalidOrderIdException extends RuntimeException {
     public InvalidOrderIdException() {
         super();
     }

@@ -2,6 +2,7 @@ package Service;
 
 import Entity.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import Exception.NotFoundProductIdException;
@@ -15,15 +16,16 @@ public class ProductService {
     public List<Product> getProducts() {
         return products;
     }
-    public Product getProductById(String id) throws NotFoundProductIdException {
-        Optional<Product> foundProduct =  products.stream()
+    public Product getProductById(String id) {
+        Optional<Product> foundProduct = products.stream()
                 .filter(product -> Global.ignoreCase(product.getId(), id))
                 .findFirst();
-        if(foundProduct.isPresent()) {
-            return foundProduct.get();
-        }
-        else{
-            throw new NotFoundProductIdException("Không tìm thấy sản phẩm có id :"+id);
-        }
+        return foundProduct.orElse(null);
+    }
+    public List<Product> getProductsByName(String name) {
+        List<Product> foundProducts = products.stream()
+                .filter(product -> Global.ignoreCase(product.getName(),name))
+                .toList();
+        return foundProducts;
     }
 }

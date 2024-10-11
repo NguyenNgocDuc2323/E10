@@ -8,7 +8,8 @@ import Exception.InvalidCustomerNameException;
 import Exception.InvalidCustomerIdException;
 import Service.CustomerService;
 import Exception.NotFoundCustomerIdException;
-
+import Validator.CustomerValidator;
+import Exception.NotFoundCustomerNameException;
 public class CustomerController {
     private List<Customer> customers;
     private CustomerService cs;
@@ -17,34 +18,29 @@ public class CustomerController {
         this.cs = cs;
         this.customers = cs.getCustomers();
     }
-
-    public String validateCustomerName(String cusName) throws InvalidCustomerNameException{
-        if (!Pattern.matches("[a-zA-Z ]{3,50}", cusName)) {
-            throw new InvalidCustomerNameException("Định Dạng Tên Customer Không hợp lệ!");
-        }
-        else{
-            return cusName;
-        }
-    }
-
-    public int validateCustomerId(String cusId) throws InvalidCustomerIdException {
-        try {
-            int customerId = Integer.parseInt(cusId);
-            if (customerId < 0) {
-                throw new InvalidCustomerIdException("Id của customer phải là 1 số dương!");
-            }
-            return customerId;
-        } catch (NumberFormatException e) {
-            throw new InvalidCustomerIdException("Id của customer phải là 1 số hợp lệ!");
-        }
-    }
-
-
     public Customer getCustomerById(String id) {
+        if (!CustomerValidator.validateCustomerId(id)) {
+            System.out.println("Customer id invalid.");
+            return null;
+        }
         try {
-            Customer customer = cs.getCustomerById(id);
-            return customer;
-        } catch (NotFoundCustomerIdException e) {
+            Customer foundCus = cs.getCustomerById(id);
+            return foundCus;
+        } catch (NotFoundCustomerIdException | InvalidCustomerIdException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+    public List<Customer> getCustomerByName(String name) {
+        if (!CustomerValidator.validateCustomerName(name)) {
+            System.out.println("Customer name invalid.");
+            return null;
+        }
+        try{
+            List<Customer> foundCus = cs.getCustomerByName(name);
+            return foundCus;
+        }
+        catch(InvalidCustomerNameException | NotFoundCustomerNameException e){
             System.out.println(e.getMessage());
             return null;
         }
